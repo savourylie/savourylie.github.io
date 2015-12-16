@@ -285,6 +285,10 @@ function getNoun(y) {
 var adjectives = ["dark", "color", "whimsical", "shiny", "noise", "apocalyptic", "insulting", "praise", "scientific"];  // types of adjectives for pizza titles
 var nouns = ["animals", "everyday", "fantasy", "gross", "horror", "jewelry", "places", "scifi"];                        // types of nouns for pizza titles
 
+// Define global variables
+
+var items; //Mover items
+
 // Generates random numbers for getAdj and getNoun functions and returns a new pizza name
 function generator(adj, noun) {
   var adjectives = getAdj(adj);
@@ -499,13 +503,17 @@ function logAverageFrame(times) {   // times is the array of User Timing measure
 // Moves the sliding background pizzas based on scroll position
 function updatePositions() {
   frame++;
-  console.log("still scrolling");
+  // console.log("still scrolling");
   window.performance.mark("mark_start_frame");
 
-  var items = document.querySelectorAll('.mover');
+  // var items = document.querySelectorAll('.mover'); ---> moved to DOMContentLoaded
+
+  var angleA = document.body.scrollTop / 1250
+  var phase = Math.sin(angleA);
+
   for (var i = 0; i < items.length; i++) {
-    var phase = Math.sin((document.body.scrollTop / 1250) + (i % 5));
-    items[i].style.left = items[i].basicLeft + 100 * phase + 'px';
+    // var phase = Math.sin((document.body.scrollTop / 1250) + (i % 5)); // ---> moved to outside of the loop
+    items[i].style.left = items[i].basicLeft + 100 * (phase * Math.cos(i % 5) + Math.cos(angleA) * Math.sin(i % 5))  + 'px';
   }
 
   // User Timing API to the rescue again. Seriously, it's worth learning.
@@ -535,5 +543,6 @@ document.addEventListener('DOMContentLoaded', function() {
     elem.style.top = (Math.floor(i / cols) * s) + 'px';
     document.querySelector("#movingPizzas1").appendChild(elem);
   }
+  items = document.querySelectorAll('.mover');
   updatePositions();
 });
