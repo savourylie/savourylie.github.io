@@ -425,45 +425,19 @@ var resizePizzas = function(size) {
 
   changeSliderLabel(size);
 
-  // Returns the size difference to change a pizza element from one size to another. Called by changePizzaSlices(size).
-  // function determineDx (elem, size) {
-  //   var oldwidth = elem.offsetWidth;
-  //   var windowwidth = document.querySelector("#randomPizzas").offsetWidth;
-  //   var oldsize = oldwidth / windowwidth;
-
-  //   // Changes the slider value to a percent width
-  //   function sizeSwitcher (size) {
-  //     switch(size) {
-  //       case "1":
-  //         return 0.25;
-  //       case "2":
-  //         return 0.3333;
-  //       case "3":
-  //         return 0.5;
-  //       default:
-  //         console.log("bug in sizeSwitcher");
-  //     }
-  //   }
-
-  //   var newsize = sizeSwitcher(size);
-  //   var dx = (newsize - oldsize) * windowwidth;
-
-  //   return dx;
-  // }
-
-  // Iterates through pizza elements on the page and changes their widths
+  // Removed the redundant DX function entirely. And fixed the jank! Yeah!
 
   function changePizzaSizes(size) {
     
     switch(size) {
       case "1":
-        newWidth = 25;
+        newWidth = "25%";
         break;
       case "2":
-        newWidth = 33.3;
+        newWidth = "33.3%";
         break;
       case "3":
-        newWidth = 50;
+        newWidth = "50%";
         break;
       default:
         console.log("bug in sizeSwitcher");
@@ -472,7 +446,7 @@ var resizePizzas = function(size) {
     var DOMPizzaContainer = document.querySelectorAll(".randomPizzaContainer");
 
     for (var i = 0; i < DOMPizzaContainer.length; i++) {
-      DOMPizzaContainer[i].style.width = newWidth + "%";
+      DOMPizzaContainer[i].style.width = newWidth;
     }
   }
 
@@ -523,12 +497,13 @@ function updatePositions() {
   window.performance.mark("mark_start_frame");
 
   // var items = document.querySelectorAll('.mover'); ---> moved to DOMContentLoaded
+  // the elements are determined once the DOM is ready so no need to assign them each time the page gets scrolled.
 
   var angleA = document.body.scrollTop / 1250
   var phase = Math.sin(angleA);
 
   for (var i = 0; i < items.length; i++) {
-    // var phase = Math.sin((document.body.scrollTop / 1250) + (i % 5)); // ---> moved to outside of the loop
+    //---> moved the phase calculation outside of the loop and used the sum identities to retain the same motion.
     items[i].style.left = items[i].basicLeft + 100 * (phase * Math.cos(i % 5) + Math.cos(angleA) * Math.sin(i % 5 ))  + 'px';
   }
 
