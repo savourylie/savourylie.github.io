@@ -9,6 +9,12 @@
     box-sizing: border-box;
 }
 
+*, *:before, *:after {
+  -webkit-box-sizing: inherit;
+  -moz-box-sizing: inherit;
+  box-sizing: inherit;
+}
+
 /*Grid and Meta Rules*/
 
 .row {
@@ -83,6 +89,21 @@
 	text-align: center;
 }
 
-img {
-	max-width: 100%;
+#display_box {
 }
+
+.display_subbox {
+    max-height: 100%;
+}
+
+img {
+    max-width: 100%;
+}
+
+
+h4 {
+    text-align: center;
+}
+/*div {
+    overflow: hidden;
+}*/
