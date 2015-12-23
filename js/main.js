@@ -104,6 +104,18 @@ $(function(){
 					// Re-render the view of the list
 					view.render(copyCat, "display");
 					console.log("view.render(" + copyCat + ", 'display') is called.");
+
+					$('#' + copyCat.id).click(function() {
+						console.log("imageClicker is working.");
+					
+						// Increase cat count in localStorage and the view
+						model.setCatCount(copyCat);
+						click(copyCat);
+		        	
+		    	    	console.log(copyCat.name + " is clicked!");
+		        		view.render(copyCat, "count");
+	    	    		console.log("view.render(" + copyCat.name + ", 'count') is called.");
+					});	        	
 				}
 			})(cat));	
 		},
