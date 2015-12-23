@@ -99,11 +99,11 @@ $(function(){
 				return function() {
 					console.log("selector is working.");
 
-					// Re-invoke the imageClicker
-
 					// Re-render the view of the list
 					view.render(copyCat, "display");
 					console.log("view.render(" + copyCat + ", 'display') is called.");
+
+					// Re-define the imageClicker <--------WHY DO I HAVE TO DO THIS?!
 
 					$('#' + copyCat.id).click(function() {
 						console.log("imageClicker is working.");
