@@ -7,15 +7,20 @@ function Cat(name, id, img_url, words) {
 	this.img_url = img_url
 	this.words = words
 	this.num_click = 0;
+	this.click = function() {
+		this.num_click++;
+	}
 }
 
-Cat.prototype.click = function() {
-	this.num_click++;
-}
+var click = function(cat) {
+	cat.num_click++;
+};
 
-Cat.prototype.test = function() {
-	console.log("Testing prototype");
-}
+// Cat.prototype.click = function() {
+// 	this.num_click++;
+// }
+
+// Generate Cats
 
 var albert = new Cat("Albert", "albert", "img/albert.jpg", "Click me!");
 var bernard = new Cat("Bernard", "bernard", "img/bernard.jpg", "Me, me ,me!");
@@ -23,66 +28,146 @@ var carol = new Cat("Carol", "carol", "img/carol.jpg", "Mewo, what's this about?
 var dorothy = new Cat("Dorothy", "dorothy", "img/dorothy.jpg", "Can I go back to sleep now?");
 var ellen = new Cat("Ellen", "ellen", "img/ellen.jpg", "Hi!");
 
+// Put all Cats in a List
+
 var cats = [albert, bernard, carol, dorothy, ellen];
 
-// Insert Cat List to DOM
+var test; // For testing the in-func variables.
 
-var list_string, pic_string;
+// App Main
 
-for (cat in cats) {
-	// Populating the Cat List
-	list_string = "<li class='collection-item avatar'><img src=" + cats[cat].img_url + " alt=" + cats[cat].name + " class='circle'><span class='title'>" + cats[cat].name + "</span><p>" + cats[cat].words + "</p><a href='#!' class='secondary-content'><i class='material-icons'" + " id=" + cats[cat].av_id + ">See me!</i></a></li>"
-	// pic_string = "<div class='display_subbox row'><h4>" + cats[cat].name + "</h4></div><div class='display_subbox row'><img id=" + cats[cat].id + " src=" + cats[cat].img_url + " alt=" + cats[cat].name + " class='display_pic'></div><div class='display_subbox row'><h4>" + cats[cat].click + "</h4>";
-	$('#collection').append(list_string);
+$(function(){
+	var model = {
+		init: function() {
+            localStorage.cats = JSON.stringify(cats);
+        },
+ 
+        getAllCats: function() {
+            return JSON.parse(localStorage.cats);
+        },
 
-	// On-click Image Display Function
-	$('#' + cats[cat].av_id).click((function(copyCat) {
-		return function() {
-			var pic_string = "<div class='display_subbox row'><h4>" + copyCat.name + "</h4></div><div class='display_subbox row'><img id=" + copyCat.id + " src=" + copyCat.img_url + " alt=" + copyCat.name + " class='display_pic'></div><div class='display_subbox row'><h4 id='counter'>" + copyCat.num_click + "</h4>";
-			$('#display_box').empty();
-			$('#display_box').append(pic_string);
-			console.log(copyCat.name + " is selected!");
-			console.log(copyCat.num_click);
+        setCatCount: function(cat_name) {
+        	var data = JSON.parse(localStorage.cats);
 
-			$('#' + copyCat.id).click(function() {
-	        	copyCat.click();
-	        	var test = $('#counter').text;
-	        	$('#counter').empty();
-				$('#counter').append("<h4 id='counter'>" + copyCat.num_click + "</h4>");
-	        	console.log(copyCat.name + " is clicked!");	
+        	for (var i = 0; i < data.length; ++i) {
+        		if (data[i].name = cat_name) {
+        			data[i].num_click++;
+        		}
+        	}
+
+        	localStorage.cats = JSON.stringify(data);
+        }
+	};
+
+	var octopus = {
+		getCats: function() {
+			var cats = model.getAllCats();
+
+			// cats.forEach(function(cat) {
+			// 	cat.click = function() {
+			// 		this.num_click++;	
+			// 	}
+			// });
+
+			// cats.forEach(function(cat) {
+			// 	click(cat);
+			// });
+
+			return cats;
+		},
+
+		// This changes the model and calls up the view
+		imageClicker: function(cat) {
+			$('#' + cat.id).click((function(copyCat) {
+				return function() {
+					console.log("imageClicker is working.");
+					
+					// Increase cat count in localStorage and the view
+					model.setCatCount(copyCat);
+					click(copyCat);
+		        	
+		        	console.log(copyCat.name + " is clicked!");
+		        	view.render(copyCat, "count");
+	    	    	console.log("view.render(" + copyCat.name + ", 'count') is called.");
+				}	        	
+    		})(cat));
+		},
+
+		imageSelector: function(cat) {
+			// console.log(cat.av_id);
+			$('#' + cat.av_id).click((function(copyCat) {
+				return function() {
+					console.log("selector is working.");
+
+					// Re-invoke the imageClicker
+
+					// Re-render the view of the list
+					view.render(copyCat, "display");
+					console.log("view.render(" + copyCat + ", 'display') is called.");
+				}
+			})(cat));	
+		},
+
+		binder: function() {
+			var cats = this.getCats();
+
+			cats.forEach(function(cat){
+				// Bind imageClicker functions to cats
+				octopus.imageClicker(cat);
+				// Bind imageSelector functions to cats
+				octopus.imageSelector(cat);
+				// console.log("binder func is working.");
+				console.log("binder func is run.");
 			});
+		},
+		init: function() {
+            model.init();
+            view.init();
+            this.binder();
+        }
+	};
+
+	var view = {
+		init: function() {
+			// Get model data (cats) from octopus
+			var cats = octopus.getCats();
+			console.log("Got cat data from the octopus. (view)");
+
+			// Initialize the cat list
+			for (cat in cats) {
+				list_string = "<li class='collection-item avatar'><img src=" + cats[cat].img_url + " alt=" + cats[cat].name + " class='circle'><span class='title'>" + cats[cat].name + "</span><p>" + cats[cat].words + "</p><a href='#!' class='secondary-content'><i class='material-icons'" + " id=" + cats[cat].av_id + " class='cat-list-item'" + ">See me!</i></a></li>";
+				$('#collection').append(list_string);
+			}
+			console.log("Cat list initialized. (view)");
+		},
+
+		render: function(cat, displayOrCount) {
+			// Change counter number in the view
+			
+
+			if (displayOrCount === "count") {
+				// Render the count
+				console.log("render count is called.");
+				console.log(cat.num_click);
+				$('.display_subbox:last-of-type').empty();
+				$('.display_subbox:last-of-type').append("<h4 id='counter'>" + cat.num_click + "</h4>");	
+			}
+			
+			else if (displayOrCount === "display") {
+				// Render the cat pic
+				var pic_string = "<div class='display_subbox row'><h4>" + cat.name + "</h4></div><div class='display_subbox row'><img id=" + cat.id + " src=" + cat.img_url + " alt=" + cat.name + " class='display_pic'></div><div class='display_subbox row'><h4 id='counter'>" + cat.num_click + "</h4>";
+				$('#display_box').empty();
+				$('#display_box').append(pic_string);
+				console.log(cat.name + " is selected!");
+				console.log(cat.num_click);
+			}
+
+			else {
+				console.log("Render function error.");
+			}
+			
 		}
-	})(cats[cat]));
+	};
 
-	// Image Clicker function which increments the count
-	$('#' + cats[cat].id).click((function(copyCat) {
-		return function() {
-        	copyCat.click();
-        	$('#counter').empty();
-			$('#counter').append("<h4 id='counter'>" + copyCat.num_click + "</h4>");
-        	console.log(copyCat.name + " is clicked!");
-    	};
-	})(cats[cat]));
-
-}
-
-// Set display box the same height as the collection
-$("#display_box").height($("#collection").height());
-
-// Albert Clicker
-
-$('#cat_albert').click(function() {
-	console.log("A");
-	clickCounterA();
-	removeCounterA();
-	displayCounterA();
-});
-
-// Bernard Clicker
-
-$('#cat_bernard').click(function() {
-	console.log("B");
-	clickCounterB();
-	removeCounterB();
-	displayCounterB();
+	octopus.init();
 });
