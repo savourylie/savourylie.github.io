@@ -56,6 +56,15 @@ $(function(){
         	}
 
         	localStorage.cats = JSON.stringify(data);
+        },
+
+        addCat: function(name, url, num_click) {
+        	var data = JSON.parse(localStorage.cats);
+
+        	data.push(new Cat(name, name.toLowerCase(), url, ''));
+        	data[data.length - 1].num_click = num_click;
+
+        	localStorage.cats = JSON.stringify(data);	
         }
 	};
 
@@ -132,10 +141,56 @@ $(function(){
 				console.log("binder func is run.");
 			});
 		},
+
+		// Get data from the Admin Form
+		getFormData: function() {
+			$("#submit-button").click(function() {
+  				console.log("Submit button is working.");
+
+  				if (document.adminForm.name.value === "") {
+			    	alert("Please enter the name of the Cat!");
+			    }
+
+			    else if (document.adminForm.url.value === "") {
+			    	alert("Please enter the picture of the cat!");
+			    }
+
+		    	else {
+		    		var cat_name = $('#cat_name').val();
+		    		var cat_url = $('#cat_url').val();
+		    		var cat_num_click = $('#cat_num_click').val();
+		        	
+		        	model.addCat(cat_name, cat_url, cat_num_click);
+		        	view.init();
+		        	view.render(octopus.getCats()[octopus.getCats().length - 1], "display");
+		        	octopus.binder();
+		    	}
+			});
+
+		},
+
+		showAdminPanel: function() {
+			$("#admin-button").click(function() {
+  				view.render(albert, "show_panel"); // Testing with Albert
+  				console.log("showAdminPanel is working.");
+			});
+		},
+
+		hideAdminPanel: function() {
+			$("#cancel-button").click(function() {
+  				view.render(albert, "hide_panel"); // Testing with Albert
+  				console.log("hideAdminPanel is working.");
+			});
+			
+		},
+
 		init: function() {
             model.init();
             view.init();
             this.binder();
+            this.getFormData();
+            this.showAdminPanel();
+            this.hideAdminPanel();
         }
 	};
 
@@ -146,6 +201,8 @@ $(function(){
 			console.log("Got cat data from the octopus. (view)");
 
 			// Initialize the cat list
+			$('#collection').empty();
+
 			for (cat in cats) {
 				list_string = "<li class='collection-item avatar'><img src=" + cats[cat].img_url + " alt=" + cats[cat].name + " class='circle'><span class='title'>" + cats[cat].name + "</span><p>" + cats[cat].words + "</p><a href='#!' class='secondary-content'><i class='material-icons'" + " id=" + cats[cat].av_id + " class='cat-list-item'" + ">See me!</i></a></li>";
 				$('#collection').append(list_string);
@@ -153,11 +210,11 @@ $(function(){
 			console.log("Cat list initialized. (view)");
 		},
 
-		render: function(cat, displayOrCount) {
+		render: function(cat, displayOrCountOrPanel) {
 			// Change counter number in the view
 			
 
-			if (displayOrCount === "count") {
+			if (displayOrCountOrPanel === "count") {
 				// Render the count
 				console.log("render count is called.");
 				console.log(cat.num_click);
@@ -165,7 +222,7 @@ $(function(){
 				$('.display_subbox:last-of-type').append("<h4 id='counter'>" + cat.num_click + "</h4>");	
 			}
 			
-			else if (displayOrCount === "display") {
+			else if (displayOrCountOrPanel === "display") {
 				// Render the cat pic
 				var pic_string = "<div class='display_subbox row'><h4>" + cat.name + "</h4></div><div class='display_subbox row'><img id=" + cat.id + " src=" + cat.img_url + " alt=" + cat.name + " class='display_pic'></div><div class='display_subbox row'><h4 id='counter'>" + cat.num_click + "</h4>";
 				$('#display_box').empty();
@@ -174,7 +231,18 @@ $(function(){
 				console.log(cat.num_click);
 			}
 
+			else if (displayOrCountOrPanel === "hide_panel") {
+				// Render the admin panel
+				$(".admin-panel-div").hide();
+			}
+
+			else if (displayOrCountOrPanel === "show_panel") {
+				// Render the admin panel
+				$(".admin-panel-div").show();
+			}
+
 			else {
+				console.log("error msg === " + displayOrCountOrPanel);
 				console.log("Render function error.");
 			}
 			
