@@ -1,253 +1,269 @@
-// Defining the Cat class
+// MODEL: Setting up the fav places
+var mcCawleys, starbucksCoco, dreamGym, yongHeDaWang, mujiRetail;
 
-function Cat(name, id, img_url, words) {
-	this.name = name;
-	this.id = id;
-	this.av_id = id + "_av";
-	this.img_url = img_url
-	this.words = words
-	this.num_click = 0;
-	this.click = function() {
-		this.num_click++;
-	}
-}
-
-var click = function(cat) {
-	cat.num_click++;
+mcCawleys = {
+  title: "McCawley's, Shenzhen",
+  id: "mccawleys",
+  coords: [22.5349443, 114.0532382]
 };
 
-// Cat.prototype.click = function() {
-// 	this.num_click++;
-// }
+dreamGym = {
+  title: "Dream Fitness, Shenzhen",
+  id: "dreamgym",
+  coords: [22.5368787, 114.0526949]
+};
 
-// Generate Cats
+starbucksCoco = {
+  title: "Starbucks Coffee, Shenzhen",
+  id: "starbuckscoco",
+  coords: [22.534225, 114.053237]
+};
 
-var albert = new Cat("Albert", "albert", "img/albert.jpg", "Click me!");
-var bernard = new Cat("Bernard", "bernard", "img/bernard.jpg", "Me, me ,me!");
-var carol = new Cat("Carol", "carol", "img/carol.jpg", "Mewo, what's this about?");
-var dorothy = new Cat("Dorothy", "dorothy", "img/dorothy.jpg", "Can I go back to sleep now?");
-var ellen = new Cat("Ellen", "ellen", "img/ellen.jpg", "Hi!");
+yongHeDaWang = {
+  title: "YongHeDaWang Restraunt, Shenzhen",
+  id: "yonghedawang",
+  coords: [22.53210445, 114.05315946]
+};
 
-// Put all Cats in a List
+mujiRetail = {
+  title: "MUJI Coco Park, Shenzhen",
+  id: "mujiretail",
+  coords: [22.53301615, 114.0547527]
+};
 
-var cats = [albert, bernard, carol, dorothy, ellen];
+var initialPlaces = [mcCawleys, dreamGym, starbucksCoco, yongHeDaWang, mujiRetail];
 
-var test; // For testing the in-func variables.
+// Google Maps Implementation
+// Declare a global map variable
+var map;
+var markers;
+var markers_R = [];
 
-// App Main
+var Place = function(data) {
+  this.title = ko.observable(data.title);
+  this.id = ko.observable(data.id);
+  this.coords = ko.observableArray(data.coords);
+  this.queryTerm  = ko.computed(function() {
+    return this.title().split(", ")[0];
+  }, this);
 
-$(function(){
-	var model = {
-		init: function() {
-            localStorage.cats = JSON.stringify(cats);
-        },
- 
-        getAllCats: function() {
-            return JSON.parse(localStorage.cats);
-        },
+  this.address = ko.observableArray(); // From Foursquare API
+  this.formattedAddress = ko.computed(function() {
+      var result = "";
+      for (var i = 0; i < this.address().length; ++i) {
+        result = result + this.address()[i] + "<br/>";
+      }
+      return result;
+  }, this);
+  this.phone = ko.observable(); // From Foursquare API
+  this.url = ko.observable(); // From Foursquare API
 
-        setCatCount: function(cat_name) {
-        	var data = JSON.parse(localStorage.cats);
+  this.marker; // From Google Maps API
+  this.infoWindowContent = ko.computed(function() {
+    return '<h2 class="firstHeading">' + this.title() + '</h2>' +
+          '<h4>' + this.formattedAddress() + '</h4>' +
+          '<h4>' + this.phone() + '</h4>' +
+          '<h4>' + this.url() + '</h4>';
+  }, this);
+};
 
-        	for (var i = 0; i < data.length; ++i) {
-        		if (data[i].name = cat_name) {
-        			data[i].num_click++;
-        		}
-        	}
+var ViewModel = function() {
+  var self = this;
 
-        	localStorage.cats = JSON.stringify(data);
-        },
+  // Make an observableArray of the fav places
+  this.favPlaces = ko.observableArray();
 
-        addCat: function(name, url, num_click) {
-        	var data = JSON.parse(localStorage.cats);
+  // Populate the FavPlaces with initial data
+  initialPlaces.forEach(function(placeItem) {
+		self.favPlaces.push(new Place(placeItem));
+	});
 
-        	data.push(new Cat(name, name.toLowerCase(), url, ''));
-        	data[data.length - 1].num_click = num_click;
+  // console.log(this.favPlaces());
 
-        	localStorage.cats = JSON.stringify(data);	
+  // Foursquare API AJAX Section
+  //////////////////////////////
+
+  var fourSquareURLQuery = "https://api.foursquare.com/v2/venues/search?client_id=TRNYXMSMSGYF0DXCBPEP1R35GH0FIMVJL3YKHAF5G4LB1AAR&client_secret=RYZNRJUVHDBPOCVDABFNOX5IIGYPOE3ZILRPD1HR2D1BBVS5&v=20160101&ll=22.5345598,114.0518504&query=";
+
+  // Get place data from Foursquare
+  for (var i_place = 0; i_place < self.favPlaces().length; ++i_place) {
+    console.log(i_place);
+
+    var queryTerm  = self.favPlaces()[i_place].queryTerm();
+    console.log("FSQ begins...queryTerm === " + queryTerm);
+
+    $.ajax({
+      url: fourSquareURLQuery + queryTerm,
+      dataType: "json",
+      jsonp: false,
+      async: false,
+      success: function(data) {
+        // Getting the phone number
+        self.favPlaces()[i_place].phone(data.response.venues[0].contact.formattedPhone);
+
+        // Getting the address lines
+        for (var j = 0; j < data.response.venues[0].location.formattedAddress.length; j++) {
+            self.favPlaces()[i_place].address(data.response.venues[0].location.formattedAddress[j]);
         }
-	};
 
-	var octopus = {
-		getCats: function() {
-			var cats = model.getAllCats();
+        // Getting the URL
+        self.favPlaces()[i_place].url(data.response.venues[0].url);
 
-			// cats.forEach(function(cat) {
-			// 	cat.click = function() {
-			// 		this.num_click++;	
-			// 	}
-			// });
+      }
+    });
 
-			// cats.forEach(function(cat) {
-			// 	click(cat);
-			// });
+    console.log("Pushed URL...queryTerm === " + queryTerm);
+    console.log(self.favPlaces()[i_place].infoWindowContent());
+  }
+  ////////////////////////
+  // End of Foursquare API
 
-			return cats;
-		},
+  // Google Maps API related
+  //////////////////////////
+  // Object version of initialPlaces
+  markers = {
+    "mccawleys": mcCawleys,
+    "starbuckscoco": starbucksCoco,
+    "dreamgym": dreamGym,
+    "yonghedawang": yongHeDaWang,
+    "mujiretail": mujiRetail
+  };
+  //////////////////////////
 
-		// This changes the model and calls up the view
-		imageClicker: function(cat) {
-			$('#' + cat.id).click((function(copyCat) {
-				return function() {
-					console.log("imageClicker is working.");
-					
-					// Increase cat count in localStorage and the view
-					model.setCatCount(copyCat);
-					click(copyCat);
-		        	
-		        	console.log(copyCat.name + " is clicked!");
-		        	view.render(copyCat, "count");
-	    	    	console.log("view.render(" + copyCat.name + ", 'count') is called.");
-				}	        	
-    		})(cat));
-		},
+  this.filter = ko.observable();
 
-		imageSelector: function(cat) {
-			// console.log(cat.av_id);
-			$('#' + cat.av_id).click((function(copyCat) {
-				return function() {
-					console.log("selector is working.");
+  this.favPlacesObj_global = {};
 
-					// Re-render the view of the list
-					view.render(copyCat, "display");
-					console.log("view.render(" + copyCat + ", 'display') is called.");
+  $('#filter').keyup(function() {
+    var substring = $('#filter').val();
 
-					// Re-define the imageClicker <--------WHY DO I HAVE TO DO THIS?!
+    var favPlacesObj = {};
 
-					$('#' + copyCat.id).click(function() {
-						console.log("imageClicker is working.");
-					
-						// Increase cat count in localStorage and the view
-						model.setCatCount(copyCat);
-						click(copyCat);
-		        	
-		    	    	console.log(copyCat.name + " is clicked!");
-		        		view.render(copyCat, "count");
-	    	    		console.log("view.render(" + copyCat.name + ", 'count') is called.");
-					});	        	
-				}
-			})(cat));	
-		},
+    for (var place = 0; place < self.favPlaces().length; place++) {
+      var string = self.favPlaces()[place].title();
+      if (string.toLowerCase().indexOf(substring.toLowerCase()) === -1) {
+        // Hide the item from the list in the DOM
+        $('#' + self.favPlaces()[place].id()).addClass('out-of-filter');
+        // Remove the marker index of the place
+        delete favPlacesObj[self.favPlaces()[place].id()];
+      }
 
-		binder: function() {
-			var cats = this.getCats();
+      else {
+        $('#' + self.favPlaces()[place].id()).removeClass('out-of-filter');
+        // Add the marker index of the place
+        favPlacesObj[self.favPlaces()[place].id()] = self.favPlaces()[place];
+      }
+    }
+    console.log($('#filter').val());
+    // console.log(favPlacesObj);
 
-			cats.forEach(function(cat){
-				// Bind imageClicker functions to cats
-				octopus.imageClicker(cat);
-				// Bind imageSelector functions to cats
-				octopus.imageSelector(cat);
-				// console.log("binder func is working.");
-				console.log("binder func is run.");
-			});
-		},
+    if (JSON.stringify(favPlacesObj) !== JSON.stringify(self.favPlacesObj_global)) {
+        setMapOnAll(null);
+        console.log("markers cleared.");
+        self.favPlacesObj_global = favPlacesObj;
 
-		// Get data from the Admin Form
-		getFormData: function() {
-			$("#submit-button").click(function() {
-  				console.log("Submit button is working.");
-
-  				if (document.adminForm.name.value === "") {
-			    	alert("Please enter the name of the Cat!");
-			    }
-
-			    else if (document.adminForm.url.value === "") {
-			    	alert("Please enter the picture of the cat!");
-			    }
-
-		    	else {
-		    		var cat_name = $('#cat_name').val();
-		    		var cat_url = $('#cat_url').val();
-		    		var cat_num_click = $('#cat_num_click').val();
-		        	
-		        	model.addCat(cat_name, cat_url, cat_num_click);
-		        	view.init();
-		        	view.render(octopus.getCats()[octopus.getCats().length - 1], "display");
-		        	octopus.binder();
-		    	}
-			});
-
-		},
-
-		showAdminPanel: function() {
-			$("#admin-button").click(function() {
-  				view.render(albert, "show_panel"); // Testing with Albert
-  				console.log("showAdminPanel is working.");
-			});
-		},
-
-		hideAdminPanel: function() {
-			$("#cancel-button").click(function() {
-  				view.render(albert, "hide_panel"); // Testing with Albert
-  				console.log("hideAdminPanel is working.");
-			});
-			
-		},
-
-		init: function() {
-            model.init();
-            view.init();
-            this.binder();
-            this.getFormData();
-            this.showAdminPanel();
-            this.hideAdminPanel();
+        for (var key in favPlacesObj) {
+            setMapOnOneMarker(map, markers_R[key]);
+            console.log("added once.");
         }
-	};
+    }
+  });
+};
 
-	var view = {
-		init: function() {
-			// Get model data (cats) from octopus
-			var cats = octopus.getCats();
-			console.log("Got cat data from the octopus. (view)");
 
-			// Initialize the cat list
-			$('#collection').empty();
 
-			for (cat in cats) {
-				list_string = "<li class='collection-item avatar'><img src=" + cats[cat].img_url + " alt=" + cats[cat].name + " class='circle'><span class='title'>" + cats[cat].name + "</span><p>" + cats[cat].words + "</p><a href='#!' class='secondary-content'><i class='material-icons'" + " id=" + cats[cat].av_id + " class='cat-list-item'" + ">See me!</i></a></li>";
-				$('#collection').append(list_string);
-			}
-			console.log("Cat list initialized. (view)");
-		},
+function initMap() {
+  console.log("initMap called...");
 
-		render: function(cat, displayOrCountOrPanel) {
-			// Change counter number in the view
-			
+  // Create a map object and specify the DOM element for display.
+  map = new google.maps.Map(document.getElementById('map'), {
+    center: {lat: 22.5345598, lng: 114.0518504},
+    scrollwheel: false,
+    zoom: 17
+  });
 
-			if (displayOrCountOrPanel === "count") {
-				// Render the count
-				console.log("render count is called.");
-				console.log(cat.num_click);
-				$('.display_subbox:last-of-type').empty();
-				$('.display_subbox:last-of-type').append("<h4 id='counter'>" + cat.num_click + "</h4>");	
-			}
-			
-			else if (displayOrCountOrPanel === "display") {
-				// Render the cat pic
-				var pic_string = "<div class='display_subbox row'><h4>" + cat.name + "</h4></div><div class='display_subbox row'><img id=" + cat.id + " src=" + cat.img_url + " alt=" + cat.name + " class='display_pic'></div><div class='display_subbox row'><h4 id='counter'>" + cat.num_click + "</h4>";
-				$('#display_box').empty();
-				$('#display_box').append(pic_string);
-				console.log(cat.name + " is selected!");
-				console.log(cat.num_click);
-			}
+  // for (i = 0; i < markers.length; i++)
+  for (var key in markers) {
+    // Get positions of all the fav places
+    var position = new google.maps.LatLng(markers[key].coords[0], markers[key].coords[1]);
 
-			else if (displayOrCountOrPanel === "hide_panel") {
-				// Render the admin panel
-				$(".admin-panel-div").hide();
-			}
+    // Set markers
+    var marker = new google.maps.Marker({
+      position: position,
+      map: map,
+      title: markers[key].title
+    });
 
-			else if (displayOrCountOrPanel === "show_panel") {
-				// Render the admin panel
-				$(".admin-panel-div").show();
-			}
+    var infoWindow = new google.maps.InfoWindow({
+      // content: markers[key].infoWindowContent()
+      content: "Wahaha"
+    });
 
-			else {
-				console.log("error msg === " + displayOrCountOrPanel);
-				console.log("Render function error.");
-			}
-			
-		}
-	};
+    google.maps.event.addListener(marker, 'click', (function(copyMarker) {
+      return function() {
+          // console.log('Testing infoWindow Stuff.');
+          // console.log(copyMarker);
+          infoWindow.open(map, copyMarker);
+          console.log(copyMarker.title());
+          // console.log(copyMarker.title);
+      };
+    })(marker));
 
-	octopus.init();
+    // marker.addListener('click', function(copyMarker) {
+    //   return function() {
+    //       console.log("marker" + markers[key].id + " " + "clicked.");
+    //   }
+    //   // infowindow.open(map, marker);
+    // }(this));
+    markers_R[key] = marker;
+    // console.dir(marker);
+  }
+
+  // Override our map zoom level once our fitBounds function runs (Make sure it only runs once)
+  // var boundsListener = google.maps.event.addListener((map), 'bounds_changed', function(event) {
+  //   this.setZoom(14);
+  //   google.maps.event.removeListener(boundsListener);
+  // });
+
+  // console.log("initMap run successfully.");
+  console.log("initMap completed...");
+}
+
+// Sets the map on all markers in the array.
+function setMapOnAll(map) {
+  for (var key in markers_R) {
+    if (!markers_R.hasOwnProperty(key)) continue;
+
+    var obj = markers_R[key];
+    for (var prop in obj) {
+        // skip loop if the property is from prototype
+        if(!obj.hasOwnProperty(prop)) continue;
+
+        markers_R[key].setMap(map);
+        console.log("SMOA working.");
+    }
+  }
+}
+
+// Sets the map on the wished markers in the array.
+function setMapOnOneMarker(map, marker) {
+    marker.setMap(map);
+}
+
+$('#menu-button').click(function(e) {
+  console.log("menu-button working");
+  $('#sidebar').toggleClass('open');
+  e.stopPropagation();
 });
+
+
+
+ko.applyBindings(new ViewModel());
+
+// MISC
+// Array Remove - By John Resig (MIT Licensed)
+Array.prototype.remove = function(from, to) {
+  var rest = this.slice((to || from) + 1 || this.length);
+  this.length = from < 0 ? this.length + from : from;
+  return this.push.apply(this, rest);
+};

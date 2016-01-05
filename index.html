@@ -1,56 +1,43 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Strict//EN">
-
+<!DOCTYPE html>
 <html>
 <head>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width,initial-scale=1">
-	 <!-- Compiled and minified CSS -->
-  	<link type="text/css" rel="stylesheet" href="css/materialize.min.css"  media="screen,projection"/>       
-	<link rel="stylesheet" href="css/style.css">
-	<title>FE Nanodegree Project 1</title>
-	<!-- Load Materilize -->
-	<link></link>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <!--Import Google Icon Font-->
+  <link href="http://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <!--Import materialize.css-->
+  <link rel="stylesheet" href="css/main.css">
+
+  <title>P5-1 Neighborhood Map Project</title>
 </head>
 <body>
-	<div class=row>
-		<div class=col-4>
-			<ul class="collection" id="collection">
-		  	</ul>
-	  	</div> <!-- list column -->
-	  	<div class="col-8" id="display_box">
-	  		<div class="display_subbox row">
-	  			<h4>Albert</h4>
-	  		</div>
-	  		<div class="display_subbox row">
-	  			<img id="albert" src="img/albert.jpg" alt="Albert" class="display_pic">
-	  		</div>
-	  		<div class="display_subbox row">
-	  			<h4 id="counter">0</h4>
-	  		</div>	  		
-	  	</div> <!-- pic column -->
-  	</div>
-  	<div class="row">
-	  	<div class='button-div col-6'>
-			<input id="admin-button" type="button" VALUE="Admin">
-		</div>
-		<div class='admin-panel-div col-6'>
-			<form name="adminForm">
-  				Cat Name: <input id="cat_name" type="text" value="" name="name"><br>
-  				Pic URL: <input id="cat_url" type="text" value="" name="url"><br>
-  				#Clicks: <input id="cat_num_click" type="text" value="" name="num_click"><br>
-			  	<input id="submit-button" type="button" value="Save" name="adminSubmit">
-			  	<input id="cancel-button" type="button" value="Cancel" name="adminCancel">
-			</form>
-		</div>
-  	</div><!--  admin row -->
-  	
-
-
-  	<!-- Load jQuery -->
-	<script type="text/javascript" src="js/lib/jquery.min.js"></script>
-	<!-- Load MaterilizeJS -->
-	<script type="text/javascript" src="js/materialize.min.js"></script>
-	<!-- Load my JS -->
-	<script type="text/javascript" src="js/main.js"></script>
+  <header>
+    <nav>
+      <!-- TopBar + SearchBar -->
+      <div class="topbar row">
+        <div id="menu-button">
+          <i class="material-icons md-light md-48">menu</i>
+        </div>
+        <div id="title">
+          <p>Cool Stuff@Futian CBD</p>
+        </div>
+      </div><!-- topbar -->
+    </nav>
+  </header>
+  <div id="sidebar" class="">
+    <form class="filter_div row">
+      <input id="filter" type="text" data-bind="filter">
+    </form>
+    <ul class="row" id="fav-places" data-bind="foreach: favPlaces">
+      <li data-bind="text: title, attr: { id: id }"></li>
+    </ul>
+  </div>
+  <div id="map"></div>
+  <div class="bottom-bar"></div>
+  <script src="js/lib/jquery-2.1.4.min.js"></script>
+  <script src="js/lib/knockout-3.4.0.js"></script>
+  <!-- <script src="js/lib/materialize.min.js"></script> -->
+  <script src="js/main.js"></script>
+  <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBUW5CtmTcHoJ31XboFhgxW-qkAVX7gUZE&callback=initMap"></script>
 </body>
 </html>
