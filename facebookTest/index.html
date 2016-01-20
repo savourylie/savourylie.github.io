@@ -14,6 +14,10 @@
                 xfbml: true,
                 version: 'v2.5'
             });
+
+            if (typeof facebookInit == 'function') {
+                facebookInit();
+            }
         };
 
         (function(d, s, id) {
@@ -27,12 +31,15 @@
             fjs.parentNode.insertBefore(js, fjs);
         }(document, 'script', 'facebook-jssdk'));
 
-        FB.getLoginStatus(function(response) {
-            if (response.status === 'connected') {
-                console.log('Logged in.');
-            }
-            else { FB.login(); }
-        });
+        
+        function facebookInit() {
+            FB.getLoginStatus(function(response) {
+                if (response.status === 'connected') {
+                    console.log('Logged in.');
+                }
+                else { FB.login(); }
+            });
+        }
     </script>
 
     <!-- <a href="#" id="login-btn">Log in with Facebook</a>
