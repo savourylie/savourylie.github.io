@@ -26,8 +26,16 @@
             js.src = "//connect.facebook.net/en_US/sdk.js";
             fjs.parentNode.insertBefore(js, fjs);
         }(document, 'script', 'facebook-jssdk'));
+
+        FB.getLoginStatus(function(response) {
+            if (response.status === 'connected') {
+                console.log('Logged in.');
+            }
+            else { FB.login(); }
+        });
     </script>
-    <a href="#" id="login-btn">Log in with Facebook</a>
+
+    <!-- <a href="#" id="login-btn">Log in with Facebook</a>
     <script type="text/javascript">
         document.getElementById('login-btn').onclick = function() {
             FB.login(function(response) {
@@ -35,7 +43,7 @@
             });
             return false;
         }
-    </script>
+    </script> -->
 
 
 
