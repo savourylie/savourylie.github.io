@@ -32,17 +32,38 @@ function facebookInit() {
     FB.getLoginStatus(function(response) {
         if (response.status === 'connected') {
             console.log('All logged in.');
+            var uid = response.authResponse.userID;
+            var accessToken = response.authResponse.accessToken;
+            console.log("UserID: " + uid);
+            console.log("AccessToken: " + accessToken);
         }
+        
         else if (response.status === 'not_authorized') {
             console.log('User is logged in to Facebook but not to your App.');
             console.log('Now logging in...');
-            FB.login();
+            FB.login(function(response) {
+                console.log("This is login response object: ");
+                console.log(response);
+                console.log("grantedScopes: ");
+                console.log(response.authResponse);
+            }, {
+                scope: 'public_profile',
+                return_scopes: true
+            });
         }
 
         else {
             console.log('User is not logged in to anything Facebook , he/she probably hates Facebook.');
             console.log('Now logging in...');
-            FB.login();
+            FB.login(function(response) {
+                console.log("This is login response object: ");
+                console.log(response);
+                console.log("grantedScopes: ");
+                console.log(response.authResponse);
+            }, {
+                scope: 'public_profile',
+                return_scopes: true
+            });
         }
     });
 }
