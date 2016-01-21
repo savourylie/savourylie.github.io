@@ -31,9 +31,19 @@ function facebookInit() {
     // Get login status OR Login to Facebook
     FB.getLoginStatus(function(response) {
         if (response.status === 'connected') {
-            console.log('Logged in.');
+            console.log('All logged in.');
         }
-        else { FB.login(); }
+        else if (response.status === 'not_authorized') {
+            console.log('User is logged in to Facebook but not to your App.');
+            console.log('Now logging in...');
+            FB.login();
+        }
+
+        else {
+            console.log('User is not logged in to anything Facebook , he/she probably hates Facebook.');
+            console.log('Now logging in...');
+            FB.login();
+        }
     });
 }
 
@@ -49,8 +59,17 @@ function testAPI() {
 var ViewModel = function() {
     var self = this;
 
-    this.fbIcon = function() {
+    this.fbLogin = function() {
         facebookInit();
+    };
+
+    this.fbOut = function() {
+        FB.logout(function(response) {
+            console.log('user is now logged out');
+            FB.getLoginStatus(function(response) {
+                console.log(response.status);
+            });
+        });
     };
 };
 
