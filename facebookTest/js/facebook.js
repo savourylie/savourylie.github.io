@@ -1,8 +1,8 @@
-'use strict';
+// 'use strict';
 
 console.log("facebook.js loaded.");
 
-Facebook
+// Facebook
 window.fbAsyncInit = function() {
     FB.init({
         appId: '561568013993276',
@@ -10,9 +10,10 @@ window.fbAsyncInit = function() {
         version: 'v2.5'
     });
 
-    if (typeof facebookInit == 'function') {
-        facebookInit();
-    }
+    // autologin
+    // if (typeof facebookInit == 'function') {
+    //     facebookInit();
+    // }
 };
 
 (function(d, s, id) {
@@ -49,7 +50,7 @@ var ViewModel = function() {
     var self = this;
 
     this.fbIcon = function() {
-        console.log("Testing ViewModel...");
+        facebookInit();
     };
 };
 
