@@ -2,6 +2,7 @@
 
 console.log("facebook.js loaded.");
 
+Facebook
 window.fbAsyncInit = function() {
     FB.init({
         appId: '561568013993276',
@@ -43,3 +44,14 @@ function testAPI() {
         'Thanks for logging in, ' + response.name + '!';
     });
 }
+
+var ViewModel = function() {
+    var self = this;
+
+    this.fbIcon = function() {
+        console.log("Testing ViewModel...");
+    };
+};
+
+var myViewModel = new ViewModel();
+ko.applyBindings(myViewModel);
