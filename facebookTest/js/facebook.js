@@ -111,6 +111,7 @@ var ViewModel = function() {
                 console.log('All logged in.');
 
                 userDataUnit(response);
+                console.log(self);
 
                 // var uid = response.authResponse.userID;
                 // var accessToken = response.authResponse.accessToken;
@@ -178,6 +179,7 @@ var ViewModel = function() {
             }
 
         });
+
 
         // FB.logout(function(response) {
         //     console.log('user is now logged out');
