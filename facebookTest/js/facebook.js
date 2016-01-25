@@ -101,6 +101,8 @@ var userDataUnit = function(response) {
 
 var ViewModel = function() {
     var self = this;
+    
+    this.userData = new UserData();
 
     this.fbLogin = function() {
         // Get login status OR Login to Facebook
