@@ -79,14 +79,14 @@ var UserData = function() {
     this.response = ko.observable();
     this.userID = ko.computed(function() {
         return self.response().authResponse.userID;
-    });
+    }, this);
     this.acessToken = ko.computed(function() {
         return self.response().authResponse.accessToken;
-    })
+    }, this);
 
     this.status = ko.computed(function() {
         return self.response.status;
-    });
+    }, this);
 
     // this.name = ko.computed(function() {
     //     return self.response().name;
