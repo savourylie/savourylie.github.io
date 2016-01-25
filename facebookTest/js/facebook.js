@@ -88,9 +88,16 @@ var UserData = function(response) {
     // });
 };
 
+// UserDataInit
+
+var userDataUnit = function() {
+    self.userdata = new UserData(response);
+    console.log("UserData instantiated.");
+    console.log("Testing userdata (response)...");
+    console.log(self.userdata.response());
+};
+
 // ViewModel
-
-
 
 var ViewModel = function() {
     var self = this;
@@ -103,10 +110,7 @@ var ViewModel = function() {
             if (response.status === 'connected') {
                 console.log('All logged in.');
 
-                self.userdata = new UserData(response);
-                console.log("UserData instantiated.");
-                console.log("Testing userdata (response)...");
-                console.log(self.userdata.response());
+                userDataUnit();
 
                 var uid = response.authResponse.userID;
                 var accessToken = response.authResponse.accessToken;
