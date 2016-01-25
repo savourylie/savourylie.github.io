@@ -22,6 +22,8 @@ window.fbAsyncInit = function() {
 function facebookInit() {
     // Get login status OR Login to Facebook
     FB.getLoginStatus(function(response) {
+        myViewModel.response(response);
+
         if (response.status === 'connected') {
             console.log('All logged in.');
             var uid = response.authResponse.userID;
@@ -79,6 +81,8 @@ console.log("facebook.js loaded.");
 
 var ViewModel = function() {
     var self = this;
+
+    this.response = observable();
 
     this.fbLogin = function() {
         facebookInit();
