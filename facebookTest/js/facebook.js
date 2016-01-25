@@ -91,10 +91,10 @@ var UserData = function(response) {
 // UserDataInit
 
 var userDataUnit = function(response) {
-    self.userdata = new UserData(response);
+    self.userData = new UserData(response);
     console.log("UserData instantiated.");
     console.log("Testing userdata (response)...");
-    console.log(self.userdata.response());
+    console.log(self.userData.response());
 };
 
 // ViewModel
@@ -116,8 +116,8 @@ var ViewModel = function() {
                 // var uid = response.authResponse.userID;
                 // var accessToken = response.authResponse.accessToken;
 
-                console.log("UserID: " + userdata.userID());
-                console.log("AccessToken: " + userdata.accessToken());
+                console.log("UserID: " + userData.userID());
+                console.log("AccessToken: " + userData.accessToken());
             }
 
             else if (response.status === 'not_authorized') {
@@ -141,9 +141,9 @@ var ViewModel = function() {
                 FB.login(function(response) {
                     userDataUnit(response);
                     console.log("This is login response object: ");
-                    console.log(userdata.response());
+                    console.log(userData.response());
                     console.log("grantedScopes: ");
-                    console.log(userdata.response().authResponse);
+                    console.log(userData.response().authResponse);
                 }, {
                     scope: 'public_profile',
                     return_scopes: true
@@ -179,14 +179,6 @@ var ViewModel = function() {
             }
 
         });
-
-
-        // FB.logout(function(response) {
-        //     console.log('user is now logged out');
-        //     FB.getLoginStatus(function(response) {
-        //         console.log(response.status);
-        //     });
-        // });
     };
 };
 
