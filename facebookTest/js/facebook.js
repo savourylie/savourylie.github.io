@@ -91,7 +91,7 @@ var UserData = function(response) {
 // UserDataInit
 
 var userDataUnit = function(response) {
-    self.userData = new UserData(response);
+    self.userData(response);
     console.log("UserData instantiated.");
     console.log("Testing userdata (response)...");
     console.log(self.userData.response());
@@ -101,7 +101,7 @@ var userDataUnit = function(response) {
 
 var ViewModel = function() {
     var self = this;
-    
+
     this.userData = new UserData();
 
     this.fbLogin = function() {
