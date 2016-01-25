@@ -23,6 +23,7 @@ function facebookInit() {
     // Get login status OR Login to Facebook
     FB.getLoginStatus(function(response) {
         myViewModel.response(response);
+        console.log("Testing out the VM... " + myViewModel.response().status);
 
         if (response.status === 'connected') {
             console.log('All logged in.');
