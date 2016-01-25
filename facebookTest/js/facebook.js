@@ -112,10 +112,11 @@ var ViewModel = function() {
 
                 userDataUnit();
 
-                var uid = response.authResponse.userID;
-                var accessToken = response.authResponse.accessToken;
-                console.log("UserID: " + uid);
-                console.log("AccessToken: " + accessToken);
+                // var uid = response.authResponse.userID;
+                // var accessToken = response.authResponse.accessToken;
+
+                console.log("UserID: " + userdata.userID());
+                console.log("AccessToken: " + userdata.accessToken());
             }
 
             else if (response.status === 'not_authorized') {
