@@ -82,7 +82,7 @@ console.log("facebook.js loaded.");
 var ViewModel = function() {
     var self = this;
 
-    this.response = observable();
+    this.response = ko.observable();
 
     this.fbLogin = function() {
         facebookInit();
