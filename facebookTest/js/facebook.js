@@ -12,7 +12,7 @@ var UserData = function(response) {
     }, this);
 
     this.status = ko.computed(function() {
-        return self.response.status;
+        return self.response().status;
     }, this);
 
     // this.name = ko.computed(function() {
