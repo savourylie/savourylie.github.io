@@ -22,8 +22,8 @@ window.fbAsyncInit = function() {
 function facebookInit() {
     // Get login status OR Login to Facebook
     FB.getLoginStatus(function(response) {
-        myViewModel.response(response);
-        console.log("Testing out the VM... " + myViewModel.response().status);
+        myViewModel.userdata.response(response);
+        console.log("Testing out the VM... " + myViewModel.userdata.response().status);
 
         if (response.status === 'connected') {
             console.log('All logged in.');
@@ -73,6 +73,62 @@ function testAPI() {
 }
 // Model
 
+var UserData = function() {
+    var self = this;
+
+    this.response = ko.observable();
+    this.userID = ko.computed(function() {
+        return self.response().authResponse.userID;
+    });
+    this.acessToken = ko.computed(function() {
+        return self.response().authResponse.accessToken;
+    })
+
+    this.status = ko.computed(function() {
+        return self.response.status;
+    });
+
+    // this.name = ko.computed(function() {
+    //     return self.response().name;
+    // });
+    //
+    // this.first_name = ko.computed(function() {
+    //     return self.response().first_name;
+    // });
+    //
+    // this.last_name = ko.computed(function() {
+    //     return self.response().last_name;
+    // });
+    //
+    // this.age_range = ko.computed(function() {
+    //     return self.response().age_range;
+    // });
+    //
+    // this.link = ko.computed(function() {
+    //     return self.response().link();
+    // });
+    //
+    // this.gender = ko.computed(function() {
+    //     return self.response().gender;
+    // });
+    //
+    // this.locale = ko.computed(function() {
+    //     return self.response().locale;
+    // });
+    //
+    // this.timezone = ko.computed(function() {
+    //     return self.response().timezone;
+    // });
+    //
+    // this.updated_time = ko.computed(function() {
+    //     return self.respone().updated_time;
+    // });
+    //
+    // this.verified = ko.computed(function() {
+    //     return self.reponse().verified;
+    // });
+};
+
 // ViewModel
 
 console.log("facebook.js loaded.");
@@ -83,7 +139,7 @@ console.log("facebook.js loaded.");
 var ViewModel = function() {
     var self = this;
 
-    this.response = ko.observable();
+    this.userdata = new UserData();
 
     this.fbLogin = function() {
         facebookInit();
