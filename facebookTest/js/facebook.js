@@ -99,10 +99,15 @@ var ViewModel = function() {
         // Get login status OR Login to Facebook
         FB.getLoginStatus(function(response) {
             console.log("Response all good!....... " + response);
-            // self.userdata = new UserData(response);
 
             if (response.status === 'connected') {
                 console.log('All logged in.');
+
+                self.userdata = new UserData(response);
+                console.log("UserData instantiated.");
+                console.log("Testing userdata (response)...");
+                console.log(self.userdata.response());
+
                 var uid = response.authResponse.userID;
                 var accessToken = response.authResponse.accessToken;
                 console.log("UserID: " + uid);
