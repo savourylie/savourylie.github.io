@@ -150,12 +150,39 @@ var ViewModel = function() {
     };
 
     this.fbOut = function() {
-        FB.logout(function(response) {
-            console.log('user is now logged out');
-            FB.getLoginStatus(function(response) {
-                console.log(response.status);
-            });
-        });
+        FB.getLoginStatus(function(response) {
+            if (response.status === 'connected') {
+                console.log("Logging out....sucker!");
+                FB.logout(function(response) {
+                    console.log('user is now logged out');
+                    FB.getLoginStatus(function(response) {
+                        console.log(response.status);
+                    });
+                });
+            }
+
+            else if (response.status === 'not_authorized') {
+                console.log("Logging out....sucker!");
+                FB.logout(function(response) {
+                    console.log('user is now logged out');
+                    FB.getLoginStatus(function(response) {
+                        console.log(response.status);
+                    });
+                });
+            }
+
+            else {
+                console.log("Wake up! You don't have a girlfriend!");
+            }
+
+        };
+
+        // FB.logout(function(response) {
+        //     console.log('user is now logged out');
+        //     FB.getLoginStatus(function(response) {
+        //         console.log(response.status);
+        //     });
+        // });
     };
 };
 
