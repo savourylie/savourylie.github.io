@@ -175,7 +175,7 @@ var ViewModel = function() {
                 console.log("Wake up! You don't have a girlfriend!");
             }
 
-        };
+        });
 
         // FB.logout(function(response) {
         //     console.log('user is now logged out');
