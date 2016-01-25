@@ -8,26 +8,24 @@
 </head>
 
 <body>
-    <!-- <div class="fb-icon" data-bind="click: fbIcon"></div> -->
-    <button data-bind="click: fbLogin">FB Login</button>
-    <button data-bind="click: fbOut">FB Logout</button>
-    <!-- <a href="#" id="login-btn">Log in with Facebook</a>
-    <script type="text/javascript">
-        document.getElementById('login-btn').onclick = function() {
-            FB.login(function(response) {
-                Log.info('FB.login response', response);
-            });
-            return false;
-        }
-    </script> -->
+    <header>
+        <h1>Sucker Tester</h1>
+    </header>
 
+    <div id="test-field" class="row">
+        <h2>You NO RUN! I know who you are! Dickface! And I know all of this information about you!</h2>
+        <!-- Use the foreach data-bind -->
+        
 
+    </div>
 
-    <!-- <fb:login-button autologoutlink="true" onlogin="OnRequestPermission();"></fb:login-button> -->
-    <div id="status"></div>
+    <div class="row">
+        <button data-bind="click: fbLogin">FB Login</button>
+        <button data-bind="click: fbOut">FB Logout</button>
+    </div>
+    <div id="status" class="row"></div>
     <script type="text/javascript" src="js/knockout-3.4.0.js"></script>
     <script type="text/javascript" src="js/facebook.js"></script>
-
 </body>
 
 </html>

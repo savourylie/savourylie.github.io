@@ -1,19 +1,11 @@
-// 'use strict';
-
-console.log("facebook.js loaded.");
-
-// Facebook
+// Facebook API
 window.fbAsyncInit = function() {
     FB.init({
         appId: '561568013993276',
+        cookie: true, // Using cookies
         xfbml: true,
         version: 'v2.5'
     });
-
-    // autologin
-    // if (typeof facebookInit == 'function') {
-    //     facebookInit();
-    // }
 };
 
 (function(d, s, id) {
@@ -37,7 +29,7 @@ function facebookInit() {
             console.log("UserID: " + uid);
             console.log("AccessToken: " + accessToken);
         }
-        
+
         else if (response.status === 'not_authorized') {
             console.log('User is logged in to Facebook but not to your App.');
             console.log('Now logging in...');
@@ -76,6 +68,14 @@ function testAPI() {
         'Thanks for logging in, ' + response.name + '!';
     });
 }
+// Model
+
+// ViewModel
+
+console.log("facebook.js loaded.");
+
+// Facebook
+
 
 var ViewModel = function() {
     var self = this;
