@@ -39,7 +39,7 @@ var UserData = function(response) {
     this.userID = ko.computed(function() {
         return self.response().authResponse.userID;
     }, this);
-    this.acessToken = ko.computed(function() {
+    this.accessToken = ko.computed(function() {
         return self.response().authResponse.accessToken;
     }, this);
 
