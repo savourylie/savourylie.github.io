@@ -90,7 +90,7 @@ var UserData = function(response) {
 
 // UserDataInit
 
-var userDataUnit = function() {
+var userDataUnit = function(response) {
     self.userdata = new UserData(response);
     console.log("UserData instantiated.");
     console.log("Testing userdata (response)...");
@@ -110,7 +110,7 @@ var ViewModel = function() {
             if (response.status === 'connected') {
                 console.log('All logged in.');
 
-                userDataUnit();
+                userDataUnit(response);
 
                 // var uid = response.authResponse.userID;
                 // var accessToken = response.authResponse.accessToken;
