@@ -123,6 +123,7 @@ var ViewModel = function() {
                 console.log('User is logged in to Facebook but not to your App.');
                 console.log('Now logging in...');
                 FB.login(function(response) {
+                    userDataUnit(response);
                     console.log("This is login response object: ");
                     console.log(response);
                     console.log("grantedScopes: ");
@@ -137,10 +138,11 @@ var ViewModel = function() {
                 console.log('User is not logged in to anything Facebook , he/she probably hates Facebook.');
                 console.log('Now logging in...');
                 FB.login(function(response) {
+                    userDataUnit(response);
                     console.log("This is login response object: ");
-                    console.log(response);
+                    console.log(userdata.response());
                     console.log("grantedScopes: ");
-                    console.log(response.authResponse);
+                    console.log(userdata.response().authResponse);
                 }, {
                     scope: 'public_profile',
                     return_scopes: true
